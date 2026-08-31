@@ -1,0 +1,36 @@
+<div class="admin-panel">
+  <p class="admin-banner">🔒 ADMIN — Mock EMSX scenario (testing only, no real access control yet)</p>
+
+  @if (loading()) {
+    <p class="status">Loading current scenario…</p>
+  } @else {
+    <h3>Mock EMSX scenario</h3>
+
+    <div class="field">
+      <select [(ngModel)]="scenario">
+        @for (opt of scenarios; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="doi-delay">Artificial delay</label>
+      <div class="delay-row">
+        <input id="doi-delay" type="number" min="0" step="500" [(ngModel)]="artificialDelayMs" />
+        <span>ms</span>
+      </div>
+    </div>
+
+    <button type="button" [disabled]="saving()" (click)="apply()">
+      {{ saving() ? 'Applying…' : 'Apply' }}
+    </button>
+
+    @if (savedMessage()) {
+      <p class="status status--ok">{{ savedMessage() }}</p>
+    }
+    @if (errorMessage()) {
+      <p class="status status--error">{{ errorMessage() }}</p>
+    }
+  }
+</div>

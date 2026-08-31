@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/Dma.OrderIntake.Api/Dma.OrderIntake.Api.csproj" />
+    <Project Path="backend/Dma.OrderIntake.Application/Dma.OrderIntake.Application.csproj" />
+    <Project Path="backend/Dma.OrderIntake.Contracts/Dma.OrderIntake.Contracts.csproj" />
+    <Project Path="backend/Dma.OrderIntake.Domain/Dma.OrderIntake.Domain.csproj" />
+    <Project Path="backend/Dma.OrderIntake.Infrastructure/Dma.OrderIntake.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Dma.OrderIntake.Domain.Tests/Dma.OrderIntake.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,41 @@
+<main>
+  <h1>DMA Order Intake — demo shell</h1>
+  <p>This app only hosts the <code>dma-order-intake</code> library standalone. All the real
+    functionality — the wizard, the order overview, the admin panel — lives in the library.</p>
+
+  @switch (state()) {
+    @case ('checking') {
+      <p class="status status--checking">Checking connection to the API…</p>
+    }
+    @case ('connected') {
+      <p class="status status--ok">✅ Connected to the API. Orders in SQLite: {{ orders().length }}</p>
+    }
+    @case ('error') {
+      <p class="status status--error">❌ Could not reach the API: {{ errorMessage() }}</p>
+    }
+  }
+
+  <hr />
+
+  <nav class="tabs">
+    <button type="button" [class.active]="tab() === 'new-order'" (click)="tab.set('new-order')">New order</button>
+    <button type="button" [class.active]="tab() === 'orders'" (click)="tab.set('orders')">Orders</button>
+  </nav>
+
+  <div class="layout">
+    <div class="main-column">
+      @switch (tab()) {
+        @case ('new-order') {
+          <doi-new-order-wizard />
+        }
+        @case ('orders') {
+          <doi-order-overview />
+        }
+      }
+    </div>
+
+    <aside class="side-column">
+      <doi-emsx-mock-scenario-admin />
+    </aside>
+  </div>
+</main>

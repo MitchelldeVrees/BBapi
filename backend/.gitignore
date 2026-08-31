@@ -1,0 +1,34 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# .NET / MSBuild
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Rider / Visual Studio / VS Code
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.DotSettings.user
+
+# EF Core local SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db

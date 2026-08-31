@@ -1,0 +1,95 @@
+<div class="instrument-resolver">
+  <div class="field">
+    <label for="doi-isin">ISIN</label>
+    <input id="doi-isin" type="text" placeholder="NL0010273215" [(ngModel)]="isin" (keyup.enter)="resolve()" />
+  </div>
+
+  <div class="field">
+    <label for="doi-mic">MIC</label>
+    <input id="doi-mic" type="text" placeholder="XAMS" [(ngModel)]="mic" (keyup.enter)="resolve()" />
+  </div>
+
+  <button type="button" class="resolve-button" [disabled]="resolving() || !isin().trim()" (click)="resolve()">
+    {{ resolving() ? 'Resolving…' : 'Resolve instrument' }}
+  </button>
+
+  @if (errorMessage()) {
+    <p class="message message--error">{{ errorMessage() }}</p>
+  }
+
+  @if (result(); as result) {
+    @switch (result.status) {
+      @case ('Invalid') {
+        <p class="message message--error">{{ result.errorMessage }}</p>
+      }
+      @case ('NotFound') {
+        <p class="message message--warn">{{ result.errorMessage }}</p>
+      }
+      @case ('MultipleMatches') {
+        <p class="message message--warn">{{ result.matches.length }} listings found — choose the correct one:</p>
+
+        <div class="match-list">
+          @for (match of result.matches; track match.instrumentId) {
+            <button
+              type="button"
+              class="match-row"
+              [class.match-row--selected]="selectedMatchId() === match.instrumentId"
+              (click)="selectedMatchId.set(match.instrumentId)"
+            >
+              <span class="match-row-mic">{{ match.mic }}</span>
+              <span class="match-row-name">{{ match.name }}</span>
+              <span class="match-row-ticker">{{ match.ticker }}</span>
+            </button>
+          }
+        </div>
+
+        @if (selectedCandidate(); as match) {
+          <div class="match-card match-card--single">
+            <p class="found-label">Selected</p>
+            <ng-container *ngTemplateOutlet="matchDetails; context: { $implicit: match }" />
+          </div>
+        }
+      }
+      @case ('Resolved') {
+        @for (match of result.matches; track match.instrumentId) {
+          <div class="match-card match-card--single">
+            <p class="found-label">Instrument gevonden</p>
+            <ng-container *ngTemplateOutlet="matchDetails; context: { $implicit: match }" />
+          </div>
+        }
+      }
+    }
+  }
+</div>
+
+<ng-template #matchDetails let-match>
+  <h3>{{ match.name }}</h3>
+
+  <dl class="details">
+    <dt>ISIN</dt>
+    <dd>{{ match.isin }}</dd>
+    <dt>Exchange</dt>
+    <dd>{{ match.mic }}</dd>
+    <dt>Currency</dt>
+    <dd>{{ match.currency }}</dd>
+    <dt>Type</dt>
+    <dd>{{ match.securityType }}</dd>
+    <dt>Ticker</dt>
+    <dd>{{ match.ticker }}</dd>
+    <dt>FIGI</dt>
+    <dd>{{ match.figi }}</dd>
+  </dl>
+
+  @if (confirmedInstrumentId() === match.instrumentId) {
+    <p class="message message--ok">✅ Confirmed</p>
+  } @else {
+    <button
+      type="button"
+      class="confirm-button"
+      [disabled]="confirming() === match.instrumentId"
+      (click)="confirm(match)"
+    >
+      {{ confirming() === match.instrumentId ? 'Confirming…' : 'Confirm instrument' }}
+    </button>
+  }
+</ng-template>

@@ -3,36 +3,69 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "frontend": {
+    "dma-order-intake": {
+      "projectType": "library",
+      "root": "projects/dma-order-intake",
+      "sourceRoot": "projects/dma-order-intake/src",
+      "prefix": "doi",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/dma-order-intake/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/dma-order-intake/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/dma-order-intake/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/dma-order-intake/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "dma-order-intake-demo": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "",
-      "sourceRoot": "src",
+      "root": "apps/dma-order-intake-demo",
+      "sourceRoot": "apps/dma-order-intake-demo/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/frontend",
-            "index": "src/index.html",
-            "browser": "src/main.ts",
+            "outputPath": "dist/dma-order-intake-demo",
+            "index": "apps/dma-order-intake-demo/src/index.html",
+            "browser": "apps/dma-order-intake-demo/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "apps/dma-order-intake-demo/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "apps/dma-order-intake-demo/public"
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "apps/dma-order-intake-demo/src/styles.scss"
             ],
             "scripts": []
           },
@@ -64,10 +97,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "frontend:build:production"
+              "buildTarget": "dma-order-intake-demo:build:production"
             },
             "development": {
-              "buildTarget": "frontend:build:development"
+              "buildTarget": "dma-order-intake-demo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,21 +115,24 @@
               "zone.js",
               "zone.js/testing"
             ],
-            "tsConfig": "tsconfig.spec.json",
+            "tsConfig": "apps/dma-order-intake-demo/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "apps/dma-order-intake-demo/public"
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "apps/dma-order-intake-demo/src/styles.scss"
             ],
             "scripts": []
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "8e710c76-33a5-44e5-97de-4dab77a98ecc"
   }
 }

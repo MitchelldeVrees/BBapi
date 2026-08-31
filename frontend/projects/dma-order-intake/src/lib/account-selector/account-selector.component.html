@@ -1,0 +1,27 @@
+<div class="account-selector">
+  <h2>Select account</h2>
+
+  @if (loading()) {
+    <p class="status">Loading accounts…</p>
+  } @else if (errorMessage()) {
+    <p class="status status--error">{{ errorMessage() }}</p>
+  } @else {
+    @for (group of customerGroups(); track group.customerId) {
+      <div class="customer-group">
+        <h3>{{ group.customerName }}</h3>
+        <div class="accounts">
+          @for (account of group.accounts; track account.accountId) {
+            <button
+              type="button"
+              class="account-chip"
+              [class.account-chip--selected]="selectedAccountId() === account.accountId"
+              (click)="select(account)"
+            >
+              {{ account.accountCode }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

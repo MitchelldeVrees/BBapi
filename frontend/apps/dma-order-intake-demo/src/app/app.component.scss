@@ -1,0 +1,64 @@
+main {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+  font-family: system-ui, sans-serif;
+}
+
+.status {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.status--checking {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.status--ok {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.status--error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.tabs button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.tabs button.active {
+  background: #4338ca;
+  border-color: #4338ca;
+  color: #fff;
+  font-weight: 600;
+}
+
+.layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.main-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.side-column {
+  flex: 0 0 auto;
+}

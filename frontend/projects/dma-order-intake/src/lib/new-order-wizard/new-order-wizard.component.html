@@ -1,0 +1,187 @@
+<div class="wizard">
+  <p class="simulation-banner">⚠️ SIMULATION — NO REAL ORDERS</p>
+
+  <ol class="steps">
+    <li [class.active]="step() === 'account'">Account</li>
+    <li [class.active]="step() === 'instrument'">Instrument</li>
+    <li [class.active]="step() === 'order-details'">Order details</li>
+    <li [class.active]="step() === 'review'">Review</li>
+    <li [class.active]="step() === 'done'">Submit</li>
+  </ol>
+
+  @switch (step()) {
+    @case ('account') {
+      <section>
+        <h2>Account</h2>
+        <hr />
+        <doi-account-selector (accountSelected)="onAccountSelected($event)" />
+        <div class="actions actions--end">
+          <button type="button" class="primary" [disabled]="!selectedAccount()" (click)="goTo('instrument')">Next</button>
+        </div>
+      </section>
+    }
+
+    @case ('instrument') {
+      <section>
+        <h2>Instrument</h2>
+        <hr />
+        <doi-instrument-resolver (instrumentSelected)="onInstrumentSelected($event)" />
+        <div class="actions">
+          <button type="button" (click)="goTo('account')">Back</button>
+          <button type="button" class="primary" [disabled]="!selectedInstrument()" (click)="goTo('order-details')">Next</button>
+        </div>
+      </section>
+    }
+
+    @case ('order-details') {
+      <section>
+        <h2>Order details</h2>
+        <hr />
+
+        <div class="field">
+          <label>Side</label>
+          <div class="radio-row">
+            <label><input type="radio" name="side" value="Buy" [(ngModel)]="side" /> Buy</label>
+            <label><input type="radio" name="side" value="Sell" [(ngModel)]="side" /> Sell</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="doi-quantity">Quantity</label>
+          <input id="doi-quantity" type="number" min="0" step="any" [(ngModel)]="quantity" />
+        </div>
+
+        <div class="field">
+          <label for="doi-order-type">Order type</label>
+          <select id="doi-order-type" [(ngModel)]="orderType">
+            <option value="Market">Market</option>
+            <option value="Limit">Limit</option>
+          </select>
+        </div>
+
+        @if (orderType() === 'Limit') {
+          <div class="field">
+            <label for="doi-limit-price">Limit</label>
+            <input id="doi-limit-price" type="number" min="0" step="any" [(ngModel)]="limitPrice" />
+          </div>
+        }
+
+        <div class="field">
+          <label>Currency</label>
+          <p class="readonly-value">{{ selectedInstrument()?.currency }}</p>
+        </div>
+
+        <div class="field">
+          <label for="doi-customer-reference">Customer reference</label>
+          <input id="doi-customer-reference" type="text" placeholder="PM-ORDER-2026-10023" [(ngModel)]="customerReference" />
+        </div>
+
+        <div class="field">
+          <label for="doi-notes">Notes</label>
+          <textarea id="doi-notes" rows="2" [(ngModel)]="notes"></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="button" (click)="goTo('instrument')">Back</button>
+          <button type="button" class="primary" [disabled]="!orderDetailsValid()" (click)="goTo('review')">Next</button>
+        </div>
+      </section>
+    }
+
+    @case ('review') {
+      <section>
+        <h2>Review order</h2>
+        <hr />
+
+        <dl class="review">
+          <dt>Account</dt>
+          <dd>{{ selectedAccount()?.accountCode }} ({{ selectedAccount()?.customerName }})</dd>
+
+          <dt>Instrument</dt>
+          <dd>
+            {{ selectedInstrument()?.name }}<br />
+            {{ selectedInstrument()?.isin }}<br />
+            {{ selectedInstrument()?.mic }}
+          </dd>
+
+          <dt>{{ side() === 'Buy' ? 'BUY' : 'SELL' }}</dt>
+          <dd>{{ quantity() | number }}</dd>
+
+          <dt>{{ orderType() === 'Limit' ? 'LIMIT' : 'MARKET' }}</dt>
+          <dd>
+            @if (orderType() === 'Limit') {
+              {{ selectedInstrument()?.currency }} {{ limitPrice() | number: '1.2-2' }}
+            } @else {
+              at market
+            }
+          </dd>
+
+          @if (customerReference()) {
+            <dt>Customer reference</dt>
+            <dd>{{ customerReference() }}</dd>
+          }
+
+          @if (notes()) {
+            <dt>Notes</dt>
+            <dd>{{ notes() }}</dd>
+          }
+        </dl>
+
+        @if (errorMessage()) {
+          <p class="message message--error">{{ errorMessage() }}</p>
+        }
+
+        <div class="actions">
+          <button type="button" [disabled]="submitting()" (click)="goTo('order-details')">Back</button>
+          @if (canRetrySubmit()) {
+            <button type="button" class="primary" [disabled]="submitting()" (click)="retrySubmit()">
+              {{ submitting() ? 'Retrying…' : 'Retry submit' }}
+            </button>
+          } @else {
+            <button type="button" class="primary" [disabled]="submitting()" (click)="submitOrder()">
+              {{ submitting() ? 'Submitting…' : 'Submit order' }}
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    @case ('done') {
+      <section>
+        <h2>Order submitted</h2>
+        <hr />
+
+        @if (submittedOrder(); as order) {
+          <p class="message message--ok">✅ Structured DMA order created.</p>
+
+          <dl class="review">
+            <dt>Internal order number</dt>
+            <dd>{{ order.internalOrderNumber }}</dd>
+
+            <dt>Status</dt>
+            <dd>
+              {{ order.status }}
+              @if (isStagingInFlight()) {
+                <span class="spinner-note">(staging in mock EMSX…)</span>
+              }
+            </dd>
+
+            @if (order.emsxSequenceNumber) {
+              <dt>EMSX sequence number (simulated)</dt>
+              <dd>{{ order.emsxSequenceNumber }}</dd>
+            }
+
+            @if (order.stagingFailureReason) {
+              <dt>Bloomberg response</dt>
+              <dd>{{ order.stagingFailureReason }}</dd>
+            }
+          </dl>
+        }
+
+        <div class="actions actions--end">
+          <button type="button" class="primary" (click)="startNewOrder()">Start new order</button>
+        </div>
+      </section>
+    }
+  }
+</div>

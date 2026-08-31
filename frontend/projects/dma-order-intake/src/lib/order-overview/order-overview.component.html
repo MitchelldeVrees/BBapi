@@ -1,0 +1,150 @@
+<div class="order-overview">
+  @switch (view()) {
+    @case ('list') {
+      <h2>Orders</h2>
+
+      <div class="filters">
+        <div class="filter-field">
+          <label for="doi-filter-status">Status</label>
+          <select id="doi-filter-status" [(ngModel)]="statusFilter">
+            <option value="">All</option>
+            @for (status of statusOptions(); track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="doi-filter-date">Date</label>
+          <input id="doi-filter-date" type="date" [(ngModel)]="dateFilter" />
+        </div>
+
+        <div class="filter-field">
+          <label for="doi-filter-account">Account</label>
+          <select id="doi-filter-account" [(ngModel)]="accountFilter">
+            <option value="">All</option>
+            @for (account of accountOptions(); track account) {
+              <option [value]="account">{{ account }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="doi-filter-instrument">Instrument</label>
+          <input id="doi-filter-instrument" type="text" placeholder="ASML…" [(ngModel)]="instrumentFilter" />
+        </div>
+
+        <div class="filter-field">
+          <label for="doi-filter-reference">Customer reference</label>
+          <input id="doi-filter-reference" type="text" placeholder="PM-ORDER…" [(ngModel)]="customerReferenceFilter" />
+        </div>
+
+        <button type="button" class="clear-filters" (click)="clearFilters()">Clear filters</button>
+      </div>
+
+      @if (loading()) {
+        <p class="status">Loading orders…</p>
+      } @else if (errorMessage()) {
+        <p class="status status--error">{{ errorMessage() }}</p>
+      } @else if (filteredOrders().length === 0) {
+        <p class="status">No orders match these filters.</p>
+      } @else {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Instrument</th>
+                <th>Side</th>
+                <th class="numeric">Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of filteredOrders(); track order.id) {
+                <tr (click)="openOrder(order)">
+                  <td>{{ order.internalOrderNumber }}</td>
+                  <td>{{ order.instrumentName ?? '—' }}</td>
+                  <td>{{ order.side.toUpperCase() }}</td>
+                  <td class="numeric">{{ order.quantity | number }}</td>
+                  <td>
+                    <span class="status-chip" [attr.data-status]="displayStatus(order.status)">
+                      {{ displayStatus(order.status) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
+    @case ('detail') {
+      @if (selectedOrder(); as order) {
+        <button type="button" class="back-link" (click)="backToList()">← Back to orders</button>
+
+        <h2>Order</h2>
+        <p class="order-number">{{ order.internalOrderNumber }}</p>
+
+        <dl class="detail">
+          <dt>Customer</dt>
+          <dd>{{ order.customerName }}</dd>
+
+          <dt>Account</dt>
+          <dd>{{ order.accountCode }}</dd>
+
+          <dt>Instrument</dt>
+          <dd>{{ order.instrumentName ?? '—' }}</dd>
+
+          <dt>Side</dt>
+          <dd>{{ order.side.toUpperCase() }}</dd>
+
+          <dt>Quantity</dt>
+          <dd>{{ order.quantity | number }}</dd>
+
+          @if (order.orderType === 'Limit') {
+            <dt>Limit</dt>
+            <dd>{{ order.currency }} {{ order.limitPrice | number: '1.2-2' }}</dd>
+          } @else {
+            <dt>Order type</dt>
+            <dd>MARKET</dd>
+          }
+
+          <dt>Status</dt>
+          <dd>{{ humanizeStatus(order.status) }}</dd>
+
+          @if (order.emsxSequenceNumber) {
+            <dt>EMSX</dt>
+            <dd>{{ order.emsxSequenceNumber }}</dd>
+          }
+
+          @if (order.stagingFailureReason) {
+            <dt>Bloomberg response</dt>
+            <dd>{{ order.stagingFailureReason }}</dd>
+          }
+
+          @if (order.customerReference) {
+            <dt>Customer reference</dt>
+            <dd>{{ order.customerReference }}</dd>
+          }
+        </dl>
+
+        <h3>Audit trail</h3>
+
+        @if (auditLoading()) {
+          <p class="status">Loading audit trail…</p>
+        } @else {
+          <ul class="audit-trail">
+            @for (event of auditTrail(); track event.eventType + event.occurredAtUtc) {
+              <li>
+                <span class="audit-time">{{ formatTime(event.occurredAtUtc) }}</span>
+                <span class="audit-description">{{ event.description }}</span>
+              </li>
+            }
+          </ul>
+        }
+      }
+    }
+  }
+</div>

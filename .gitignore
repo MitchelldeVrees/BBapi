@@ -1,0 +1,31 @@
+# Stack-specific ignores live in backend/.gitignore and frontend/.gitignore.
+# This file also covers .NET build output repo-wide, since tests/ (and any
+# future .NET project outside backend/) isn't covered by backend/.gitignore.
+
+# .NET build output
+[Bb]in/
+[Oo]bj/
+*.db
+*.db-shm
+*.db-wal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log

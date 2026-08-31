@@ -1,0 +1,25 @@
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dma.OrderIntake.Api/Dockerfile
+    ports:
+      - "5158:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # SQLite file lives on the api-data volume so it survives container restarts.
+      - ConnectionStrings__OrderIntakeDb=Data Source=/data/orderintake.db
+    volumes:
+      - api-data:/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: apps/dma-order-intake-demo/Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  api-data:

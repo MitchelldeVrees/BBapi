@@ -1,0 +1,87 @@
+.admin-panel {
+  font-family: system-ui, sans-serif;
+  max-width: 340px;
+  padding: 1rem;
+  border: 1px dashed #d97706;
+  border-radius: 8px;
+  background: #fffbeb;
+}
+
+.admin-banner {
+  margin: 0 0 0.75rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: #fde68a;
+  color: #78350f;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.field {
+  margin-bottom: 0.75rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.field select,
+.field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.delay-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.delay-row input {
+  flex: 1;
+}
+
+button {
+  padding: 0.45rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  background: #d97706;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+}
+
+.status--ok {
+  color: #047857;
+  font-weight: 600;
+}
+
+.status--error {
+  color: #b91c1c;
+}

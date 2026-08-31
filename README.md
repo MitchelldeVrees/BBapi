@@ -1,42 +1,56 @@
-# BBapi Web Application
+# DMA Order Intake
 
 This workspace contains:
 
-- `backend`: ASP.NET Core Web API
-- `frontend`: Angular application
+- `backend/` — .NET 10 solution, layered as `Domain → Application → Infrastructure/Contracts → Api`.
+  See [docs/architecture.md](docs/architecture.md).
+- `frontend/` — Angular workspace: the `dma-order-intake` library (real functionality lives here)
+  and the `dma-order-intake-demo` app (a thin shell to run the library standalone).
+- `tests/` — test projects, mirroring the backend layers.
+- `docs/` — architecture notes.
+- `docker-compose.yml` — runs the whole stack.
 
-## Prerequisites
+## Status
 
-- .NET SDK (project currently targets .NET 10)
-- Node.js (current setup validated with Node 22.14.0)
-- npm
+This step only proves the architecture: Angular can reach the API, and the API can reach SQLite.
+No order processing, Bloomberg, IdentityServer, or OpenFIGI integration yet.
 
-## Run The Backend
+## Run everything with Docker
 
-From the repository root:
+```bash
+docker compose up --build
+```
 
-```powershell
-cd backend
+- Frontend: http://localhost:4200
+- API: http://localhost:5158/api/orders
+
+The API applies its EF Core migrations on startup and stores `orderintake.db` on a named Docker
+volume (`api-data`), so data survives container restarts.
+
+## Run locally without Docker
+
+### Backend
+
+```bash
+cd backend/Dma.OrderIntake.Api
 dotnet run
 ```
 
-The API runs on `http://localhost:5088` in development.
+Runs on `http://localhost:5158` (see `Properties/launchSettings.json`).
 
-## Run The Frontend
+### Frontend
 
-In another terminal from the repository root:
-
-```powershell
+```bash
 cd frontend
+npm install
 npm start
 ```
 
-Angular runs on `http://localhost:4200`.
+Builds the `dma-order-intake` library, then serves `dma-order-intake-demo` on
+`http://localhost:4200`, pointed at `http://localhost:5158`.
 
-## App Behavior
+## Prerequisites
 
-When both apps are running, the Angular UI fetches weather data from:
-
-- `GET http://localhost:5088/weatherforecast`
-
-If the API is not running, the frontend shows a clear error message.
+- .NET SDK 10
+- Node.js 22.x and npm
+- Docker + Docker Compose (for `docker compose up --build`)
