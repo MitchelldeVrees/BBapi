@@ -1,0 +1,24 @@
+<main class="page-shell">
+  <section class="weather-card">
+    <header class="card-header">
+      <div>
+        <p class="eyebrow">Angular + .NET Core</p>
+        <h1>{{ title }}</h1>
+      </div>
+      <button type="button" (click)="loadForecast()" [disabled]="isLoading">
+        {{ isLoading ? 'Refreshing...' : 'Refresh Data' }}
+      </button>
+    </header>
+
+    <p class="status" *ngIf="isLoading">Loading fresh forecast...</p>
+    <p class="status error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="grid" *ngIf="!isLoading && !errorMessage">
+      <article class="forecast" *ngFor="let day of forecasts">
+        <p class="date">{{ day.date | date:'EEE, MMM d' }}</p>
+        <p class="summary">{{ day.summary }}</p>
+        <p class="temp">{{ day.temperatureC }} C / {{ day.temperatureF }} F</p>
+      </article>
+    </div>
+  </section>
+</main>
